@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Project {
     private Nod head = null;
 
-    // Ввод с головы (новые элементы добавляются вперед)
+    // Ввод с головы
     public void createHead() {
         Scanner in = new Scanner(System.in);
         System.out.println("Введите количество элементов:");
@@ -64,7 +64,7 @@ public class Project {
         ref.next = newNode;
     }
 
-    // Вставка по номеру (0 - начало)
+    // Вставка по номеру
     public void Insert(int value, int index) {
         if (index == 0) {
             AddFirst(value);
