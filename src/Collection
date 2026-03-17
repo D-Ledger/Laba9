@@ -1,0 +1,74 @@
+import java.util.*;
+
+public class Collection {
+    // Количество элементов в коллекции
+    private static final int COUNT = 15000000;
+    // Количество элементов для вычисления скорости получения по индексу
+    private static final long GET_ITERATIONS = 15000000000L;
+
+    public static void main(String[] args) {
+        List<Integer> arrayList = new ArrayList<>(COUNT);
+        Deque<Integer> arrayDeque = new ArrayDeque<>(COUNT);
+        TreeSet<Integer> treeSet = new TreeSet<>();
+
+        for (int i = 0; i < COUNT; i++) {
+            arrayList.add(i);
+            arrayDeque.add(i);
+            treeSet.add(i);
+        }
+        // Добавление в начало
+        System.out.println("Добавление элемента в начало коллекции:");
+        System.out.println("   ArrayDeque: " + measure(() -> arrayDeque.addFirst(-1)) + " мс");
+        System.out.println("   TreeSet:    " + measure(() -> treeSet.add(-1)) + " мс (автоматическая сортировка по значению)");
+        System.out.println("   ArrayList:  " + measure(() -> arrayList.add(0, -1)) + " мс");
+
+        // Добавление в конец
+        System.out.println("\nДобавление элемента в конец коллекции:");
+        System.out.println("   ArrayDeque: " + measure(() -> arrayDeque.addLast(COUNT + 2)) + " мс");
+        System.out.println("   TreeSet:    " + measure(() -> treeSet.add(COUNT + 2)) + " мс");
+        System.out.println("   ArrayList:  " + measure(() -> arrayList.add(COUNT + 2)) + " мс");
+
+        // Добавление в середину
+        System.out.println("\nДобавление элемента в середину коллекции:");
+        System.out.println("   ArrayDeque: не предусмотренна операция (только начало/конец)");
+        System.out.println("   TreeSet:    " + measure(() -> treeSet.add(COUNT / 2)) + " мс (позиция определяется структурой дерева)");
+        System.out.println("   ArrayList:  " + measure(() -> arrayList.add(COUNT / 2, 555)) + " мс");
+
+        // Удаление из начала
+        System.out.println("\nУдаление элемента в начале коллекции:");
+        System.out.println("   ArrayDeque: " + measure(() -> arrayDeque.removeFirst()) + " мс");
+        System.out.println("   TreeSet:    " + measure(() -> treeSet.remove(treeSet.first())) + " мс");
+        System.out.println("   ArrayList:  " + measure(() -> arrayList.remove(0)) + " мс");
+
+        // Удаление из конца
+        System.out.println("\nУдаление элемента в конце коллекции:");
+        System.out.println("   ArrayDeque: " + measure(() -> arrayDeque.removeLast()) + " мс");
+        System.out.println("   TreeSet:    " + measure(() -> treeSet.remove(treeSet.last())) + " мс");
+        System.out.println("   ArrayList:  " + measure(() -> arrayList.remove(arrayList.size() - 1)) + " мс");
+
+        // Удаление из середины
+        System.out.println("\nУдаление элемента в середине коллекции:");
+        System.out.println("   ArrayDeque: не предусмотренна операция");
+        System.out.println("   TreeSet:    " + measure(() -> treeSet.remove(COUNT / 2)) + " мс");
+        System.out.println("   ArrayList:  " + measure(() -> arrayList.remove(arrayList.size() / 2)) + " мс");
+
+        // Получение по индексу
+        System.out.println("\nПолучение элемента по индексу:");
+
+        long startGet = System.currentTimeMillis();
+        for (long i = 0; i < GET_ITERATIONS; i++) {
+            arrayList.get(COUNT / 2);
+        }
+        long durationGet = System.currentTimeMillis() - startGet;
+
+        System.out.println("   ArrayDeque: доступ по индексу отсутствует");
+        System.out.println("   TreeSet:    прямая адресация по индексу отсутствует");
+        System.out.println("   ArrayList:  " + durationGet + " мс");
+    }
+
+    private static long measure(Runnable action) {
+        long start = System.currentTimeMillis();
+        action.run();
+        return System.currentTimeMillis() - start;
+    }
+}
